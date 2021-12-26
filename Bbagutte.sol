@@ -8,7 +8,7 @@ pragma solidity ^0.4.24;
 // Total supply  : 21000000
 // Decimals      : 4
 // Owner Account : 0x6d4e23d391761Cfb49C2115F600aBE90e4F45Bfa
-// Developer E-mail : junha.ahn.dev@gmail.com, ddolddol9906@icloud.com
+// Developer E-mail : junha.ahn.dev@gmail.com, devcho1010000@naver.com
 //
 // Bbagutte coin  *Licence.
 // ----------------------------------------------------------------------------
