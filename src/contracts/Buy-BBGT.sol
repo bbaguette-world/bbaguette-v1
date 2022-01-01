@@ -40,13 +40,13 @@ contract BuyBBGT {
     selfdestruct(payable(owner));
   }
 
-  function buy() payable public{ 
-		require(msg.value > 0, "amount must bigger than ZERO");
+  function buy() payable public { 
+    require(msg.value > 0, "amount must bigger than ZERO");
     uint256 amountTobuy = msg.value;
     uint256 dexBalance = tokenInstance.balanceOf(address(this));
     require(amountTobuy > 0, "You need to send some ether");
     require(amountTobuy <= dexBalance, "Not enough tokens in the reserve");
     tokenInstance.transfer(msg.sender, amountTobuy * 100);
-	}
+  }
     
 }
