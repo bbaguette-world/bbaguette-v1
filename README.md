@@ -8,3 +8,4 @@ BBGT Contract: `0x74fC142f8482c1a9E8092c0D7dfb3a3ddeE3943A`
 
 Buy-BBGT-v1 Contract:  `0xE148c1265921528E3Cc67c57319602F8be1E41Cb`
 - totalSupply: 14,000,000
+- kill txhash: [`0x39e5d4c20bd6a349babcf1c076ceab2c6338183c1339dae9d3aecb94ccb7b76f`](https://explorer.popcateum.org/tx/0x39e5d4c20bd6a349babcf1c076ceab2c6338183c1339dae9d3aecb94ccb7b76f?network=Popcateum)
