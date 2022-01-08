@@ -43,7 +43,6 @@ contract BuyBBGT {
   }
 
   function buy() payable public { 
-
     require(block.number > requiredBlock);
     require(msg.value > 0, "amount must bigger than ZERO");
     uint256 amountTobuy = msg.value;
