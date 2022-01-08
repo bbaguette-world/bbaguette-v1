@@ -12,10 +12,12 @@ interface Token {
 contract BuyBBGT {
   Token public tokenInstance;
   address public owner;
+  uint256 public requiredBlock;
 
   constructor(address _tokenAddress) {
     tokenInstance = Token(_tokenAddress);
     owner = msg.sender;
+    requiredBlock = block.number + 8640;
   }
 
   modifier onlyOwner() {
@@ -41,12 +43,14 @@ contract BuyBBGT {
   }
 
   function buy() payable public { 
+
+    require(block.number > requiredBlock);
     require(msg.value > 0, "amount must bigger than ZERO");
     uint256 amountTobuy = msg.value;
     uint256 dexBalance = tokenInstance.balanceOf(address(this));
     require(amountTobuy > 0, "You need to send some ether");
     require(amountTobuy <= dexBalance, "Not enough tokens in the reserve");
-    tokenInstance.transfer(msg.sender, amountTobuy);
+    tokenInstance.transfer(msg.sender, (amountTobuy * 2));
   }
     
 }
