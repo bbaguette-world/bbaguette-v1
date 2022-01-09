@@ -19,4 +19,6 @@ Buy-BBGT-v2 Contract:  `0xa5883859d03f60ae3Be90CF8837DAfC3fa02aC7C`
 - totalSupply: 1,000,000
 
 
+
+
 ENJOY BBAGUETTE!
