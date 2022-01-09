@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Developer : Sueun-dev, junha-ahn 
 
 pragma solidity ^0.8.0;
 
@@ -51,5 +52,5 @@ contract BuyBBGT {
     require(amountTobuy <= dexBalance, "Not enough tokens in the reserve");
     tokenInstance.transfer(msg.sender, (amountTobuy * 2));
   }
-    
+
 }
