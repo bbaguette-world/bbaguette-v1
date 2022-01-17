@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Developer : Sueun-dev, junha-ahn 
+// BBGT-v2 released
 
 pragma solidity ^0.8.0;
 
