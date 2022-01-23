@@ -116,7 +116,7 @@ contract BBGTSale is Context {
                 BBGTTokenContract.transferFrom(
                     _msgSender(),
                     address(this),
-                    numberOfTokens.mul(PRICE_PER_BBGT)
+                    PRICE_PER_BBGT
                 );
                 BBGTNFTContract.mint(_msgSender());
             }
