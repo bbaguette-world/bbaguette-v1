@@ -13,11 +13,11 @@ contract BBGTSale is Context {
     IBBGTv1 public BBGTNFTContract;
     IERC20 public BBGTTokenContract;
 
-    uint16 MAX_CLONES_SUPPLY = 100;
+    uint16 MAX_SUPPLY = 100;
     uint256 PRICE_PER_POP = 9999 ether;
     uint256 PRICE_PER_BBGT = 1999 ether;
 
-    uint256 public constant maxPurchase = 20;
+    uint256 public constant maxPurchase = 3;
     bool public isSale = false;
 
     address public C1;
@@ -27,17 +27,13 @@ contract BBGTSale is Context {
     modifier mintRole(uint256 numberOfTokens) {
         require(isSale, "The sale has not started.");
         require(
-            BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY,
+            BBGTNFTContract.totalSupply() < MAX_SUPPLY,
             "Sale has already ended."
         );
+        require(numberOfTokens <= maxPurchase, "Can only mint 3 NFT at a time");
         require(
-            numberOfTokens <= maxPurchase,
-            "Can only mint 20 Clones at a time"
-        );
-        require(
-            BBGTNFTContract.totalSupply().add(numberOfTokens) <=
-                MAX_CLONES_SUPPLY,
-            "Purchase would exceed max supply of Clones"
+            BBGTNFTContract.totalSupply().add(numberOfTokens) <= MAX_SUPPLY,
+            "Purchase would exceed max supply of NFT"
         );
         _;
     }
@@ -104,7 +100,7 @@ contract BBGTSale is Context {
         mintRoleByPOP(numberOfTokens)
     {
         for (uint256 i = 0; i < numberOfTokens; i++) {
-            if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
+            if (BBGTNFTContract.totalSupply() < MAX_SUPPLY) {
                 BBGTNFTContract.mint(_msgSender());
             }
         }
@@ -112,12 +108,11 @@ contract BBGTSale is Context {
 
     function mintByBBGT(uint256 numberOfTokens)
         public
-        payable
         mintRole(numberOfTokens)
         mintRoleByBBGT(numberOfTokens)
     {
         for (uint256 i = 0; i < numberOfTokens; i++) {
-            if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
+            if (BBGTNFTContract.totalSupply() < MAX_SUPPLY) {
                 BBGTTokenContract.transferFrom(
                     _msgSender(),
                     address(this),
@@ -128,13 +123,13 @@ contract BBGTSale is Context {
         }
     }
 
-    function preMintClone(uint256 numberOfTokens, address receiver)
+    function preMint(uint256 numberOfTokens, address receiver)
         public
         onlyCreator
     {
-        require(!isSale, "The sale has started. Can't call preMintClone");
+        require(!isSale, "The sale has started. Can't call preMint");
         for (uint256 i = 0; i < numberOfTokens; i++) {
-            if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
+            if (BBGTNFTContract.totalSupply() < MAX_SUPPLY) {
                 BBGTNFTContract.mint(receiver);
             }
         }
