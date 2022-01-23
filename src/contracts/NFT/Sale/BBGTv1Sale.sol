@@ -4,130 +4,172 @@ pragma solidity ^0.8.4;
 
 import "../../openzeppelin/contracts/utils/Context.sol";
 import "../../openzeppelin/contracts/utils/math/SafeMath.sol";
-import "../../openzeppelin/contracts/token/ERC721/extenstions/IERC721Enumerable.sol";
 import "../../openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../ERC721/IBBGTv1.sol";
 
 contract BBGTSale is Context {
-	using SafeMath for uint256;
+    using SafeMath for uint256;
 
-	IERC721Enumerable public BBGTNFTContract;
-	IERC20 public BBGTTokenContract;
+    IBBGTv1 public BBGTNFTContract;
+    IERC20 public BBGTTokenContract;
 
-	uint16 MAX_CLONES_SUPPLY = 100;
-	uint256 PRICE_PER_POP = 9999 ether;
-  uint256 PRICE_PER_BBGT = 1999 ether;
+    uint16 MAX_CLONES_SUPPLY = 100;
+    uint256 PRICE_PER_POP = 9999 ether;
+    uint256 PRICE_PER_BBGT = 1999 ether;
 
-	uint256 public constant maxPurchase = 20;
-	bool public isSale = false;
+    uint256 public constant maxPurchase = 20;
+    bool public isSale = false;
 
-	address public D1;
-	address public D2;
-	address public A1;
+    address public C1;
+    address public C2;
+    address public C3;
 
-	modifier mintRole(uint256 numberOfTokens) {
-		require(isSale, "The sale has not started.");
-		require(BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY, "Sale has already ended.");
-		require(numberOfTokens <= maxPurchase, "Can only mint 20 Clones at a time");
-		require(BBGTNFTContract.totalSupply().add(numberOfTokens) <= MAX_CLONES_SUPPLY, "Purchase would exceed max supply of Clones");
-		_;
-	}
+    modifier mintRole(uint256 numberOfTokens) {
+        require(isSale, "The sale has not started.");
+        require(
+            BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY,
+            "Sale has already ended."
+        );
+        require(
+            numberOfTokens <= maxPurchase,
+            "Can only mint 20 Clones at a time"
+        );
+        require(
+            BBGTNFTContract.totalSupply().add(numberOfTokens) <=
+                MAX_CLONES_SUPPLY,
+            "Purchase would exceed max supply of Clones"
+        );
+        _;
+    }
 
-	modifier mintRoleByPOP(uint256 numberOfTokens) {
-		require(PRICE_PER_POP.mul(numberOfTokens) <= msg.value, "POP value sent is not correct");
-		_;
-	}
+    modifier mintRoleByPOP(uint256 numberOfTokens) {
+        require(
+            PRICE_PER_POP.mul(numberOfTokens) <= msg.value,
+            "POP value sent is not correct"
+        );
+        _;
+    }
 
-	modifier mintRoleByBBGT(uint256 numberOfTokens) {
-		uint256 balance = BBGTTokenContract.balanceOf(_msgSender());
-		require(PRICE_PER_BBGT.mul(numberOfTokens) <= balance, "Not enough balance");
-		_;
-	}
+    modifier mintRoleByBBGT(uint256 numberOfTokens) {
+        uint256 balance = BBGTTokenContract.balanceOf(_msgSender());
+        require(
+            PRICE_PER_BBGT.mul(numberOfTokens) <= balance,
+            "Not enough balance"
+        );
+        _;
+    }
 
-	//D1: Developer, D2: Developer, A1: Artist
+    // C1: Developer, C2: Developer, C3: Artist
+    modifier onlyCreator() {
+        require(
+            C1 == _msgSender() || C2 == _msgSender() || C3 == _msgSender(),
+            "onlyCreator: caller is not the creator"
+        );
+        _;
+    }
 
-	modifier onlyCreator() {
-		require(D1 == _msgSender() || D2 == _msgSender() || A1 == _msgSender(), "onlyCreator: caller is not the creator");
-		_;
-	}
+    modifier onlyC1() {
+        require(C1 == _msgSender(), "only C1: caller is not the C1");
+        _;
+    }
 
-	modifier onlyD1() {
-		require(D1 == _msgSender(), "only D1: caller is not the D1");
-		_;
-	}
+    modifier onlyC2() {
+        require(C2 == _msgSender(), "only C2: caller is not the C2");
+        _;
+    }
 
-	modifier onlyD2() {
-		require(D2 == _msgSender(), "only D2: caller is not the D2");
-		_;
-	}
+    modifier onlyC3() {
+        require(C3 == _msgSender(), "only C3: caller is not the C3");
+        _;
+    }
 
-	modifier onlyA1() {
-		require(A1 == _msgSender(), "only A1: caller is not the A1");
-		_;
-	}
+    constructor(
+        address nft,
+        address token,
+        address _C1,
+        address _C2,
+        address _C3
+    ) {
+        BBGTNFTContract = IBBGTv1(nft);
+        BBGTTokenContract = IERC20(token);
+        C1 = _C1;
+        C2 = _C2;
+        C3 = _C3;
+    }
 
-	constructor(address nft, address token, address _D1, address _D2, address _A1) {
-		BBGTNFTContract = IERC721(nft);
-		BBGTTokenContract = IERC20(token);
-		D1 = _D1;
-		D2 = _D2;
-		A1 = _A1;
-	}
+    function mintByPOP(uint256 numberOfTokens)
+        public
+        payable
+        mintRole(numberOfTokens)
+        mintRoleByPOP(numberOfTokens)
+    {
+        for (uint256 i = 0; i < numberOfTokens; i++) {
+            if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
+                BBGTNFTContract.mint(_msgSender());
+            }
+        }
+    }
 
-	function mintByPOP(uint256 numberOfTokens) public payable mintRole(numberOfTokens), mintRoleByPOP(numberOfTokens) {
-		for (uint256 i = 0; i < numberOfTokens; i++) {
-			if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
-				BBGTNFTContract.mint(_msgSender());
-			}
-		}
-	}
-	function mintByBBGT(uint256 numberOfTokens) public payable mintRole(numberOfTokens), mintRoleByBBGT(numberOfTokens) {
-		for (uint256 i = 0; i < numberOfTokens; i++) {
-			if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
-				BBGTTokenContract.transferFrom(_msgSender(), address(this), numberOfTokens.mul(PRICE_PER_BBGT));
-				BBGTNFTContract.mint(_msgSender());
+    function mintByBBGT(uint256 numberOfTokens)
+        public
+        payable
+        mintRole(numberOfTokens)
+        mintRoleByBBGT(numberOfTokens)
+    {
+        for (uint256 i = 0; i < numberOfTokens; i++) {
+            if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
+                BBGTTokenContract.transferFrom(
+                    _msgSender(),
+                    address(this),
+                    numberOfTokens.mul(PRICE_PER_BBGT)
+                );
+                BBGTNFTContract.mint(_msgSender());
+            }
+        }
+    }
 
-			}
-		}
-	}
+    function preMintClone(uint256 numberOfTokens, address receiver)
+        public
+        onlyCreator
+    {
+        require(!isSale, "The sale has started. Can't call preMintClone");
+        for (uint256 i = 0; i < numberOfTokens; i++) {
+            if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
+                BBGTNFTContract.mint(receiver);
+            }
+        }
+    }
 
-	function preMintClone(uint256 numberOfTokens, address receiver) public onlyCreator {
-		require(!isSale, "The sale has started. Can't call preMintClone");
-		for (uint256 i = 0; i < numberOfTokens; i++) {
-			if (BBGTNFTContract.totalSupply() < MAX_CLONES_SUPPLY) {
-				BBGTNFTContract.mint(receiver);
-			}
-		}
-	}
+    function withdraw() public payable onlyCreator {
+        uint256 contractPOPBalance = address(this).balance;
+        uint256 percentagePOP = contractPOPBalance / 100;
 
+        uint256 contractBBGTBalance = BBGTTokenContract.balanceOf(
+            address(this)
+        );
+        uint256 percentageBBGT = contractBBGTBalance / 100;
 
-	function withdraw() public payable onlyCreator {
-		uint256 contractPOPBalance = address(this).balance;
-		uint256 percentagePOP = contractPOPBalance / 100;
+        require(payable(C1).send(percentagePOP * 35));
+        require(payable(C2).send(percentagePOP * 35));
+        require(payable(C3).send(percentagePOP * 30));
+        require(BBGTTokenContract.transfer(address(C1), percentageBBGT * 35));
+        require(BBGTTokenContract.transfer(address(C2), percentageBBGT * 35));
+        require(BBGTTokenContract.transfer(address(C3), percentageBBGT * 30));
+    }
 
-		uint256 contractBBGTBalance = BBGTTokenContract.balanceOf(address(this));
-		uint256 percentageBBGT = contractBBGTBalance / 100;		
+    function setC1(address changeAddress) public onlyC1 {
+        C1 = changeAddress;
+    }
 
-		require(payable(D1).send(percentagePOP * 35));
-		require(payable(D2).send(percentagePOP * 35));
-		require(payable(A1).send(percentagePOP * 30));
-		require(BBGTTokenContract.transfer(address(D1), percentageBBGT * 35));
-		require(BBGTTokenContract.transfer(address(D2), percentageBBGT * 35));
-		require(BBGTTokenContract.transfer(address(A1), percentageBBGT * 30));
-	}
+    function setC2(address changeAddress) public onlyC2 {
+        C2 = changeAddress;
+    }
 
-	function setD1(address changeAddress) public onlyD1 {
-		D1 = changeAddress;
-	}
+    function setC3(address changeAddress) public onlyC3 {
+        C3 = changeAddress;
+    }
 
-	function setD2(address changeAddress) public onlyD2 {
-		D2 = changeAddress;
-	}
-
-	function setA1(address changeAddress) public onlyA1 {
-		A1 = changeAddress;
-	}
-
-	function setSale() public onlyCreator {
-		isSale = !isSale;
-	}
+    function setSale() public onlyCreator {
+        isSale = !isSale;
+    }
 }
