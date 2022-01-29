@@ -14,7 +14,7 @@ contract BBGTv1 is ERC721, ERC721Enumerable, Ownable {
     string private _baseTokenURI;
 
     modifier onlyMinter() {
-        require(_msgSender() == minterContract);
+        require(_msgSender() == minterContract, "only Minter error");
         _;
     }
 
