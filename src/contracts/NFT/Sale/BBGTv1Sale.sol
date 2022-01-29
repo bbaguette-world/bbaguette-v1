@@ -47,10 +47,13 @@ contract BBGTSale is Context {
     }
 
     modifier mintRoleByBBGT(uint256 numberOfTokens) {
-        uint256 balance = BBGTTokenContract.balanceOf(_msgSender());
+        uint256 allowanced = BBGTTokenContract.allowance(
+            _msgSender(),
+            address(this)
+        );
         require(
-            PRICE_PER_BBGT.mul(numberOfTokens) <= balance,
-            "Not enough balance"
+            PRICE_PER_BBGT.mul(numberOfTokens) <= allowanced,
+            "Not enough allowanced"
         );
         _;
     }
