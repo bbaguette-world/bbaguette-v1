@@ -20,6 +20,7 @@ contract BBGTv1 is ERC721, ERC721Enumerable, Ownable {
 
     constructor(string memory baseTokenURI) ERC721("BBGT_NFT", "BBGT") {
         _baseTokenURI = baseTokenURI;
+        _tokenIdCounter.increment();
     }
 
     function mint(address to) external virtual onlyMinter {
