@@ -11,6 +11,7 @@ contract BBGTv1 is ERC721, ERC721Enumerable, Ownable {
 
     Counters.Counter private _tokenIdCounter;
     address public minterContract;
+    uint16 public MAX_SUPPLY = 100;
     string private _baseTokenURI;
 
     modifier onlyMinter() {
@@ -24,7 +25,7 @@ contract BBGTv1 is ERC721, ERC721Enumerable, Ownable {
     }
 
     function mint(address to) external virtual onlyMinter {
-        require(totalSupply() < 100, "OVER MINTING");
+        require(totalSupply() < MAX_SUPPLY, "OVER MINTING");
         _mint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
     }
