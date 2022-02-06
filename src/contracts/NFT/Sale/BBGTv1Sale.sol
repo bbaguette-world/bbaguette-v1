@@ -17,7 +17,7 @@ contract BBGTSale is Context {
     uint256 PRICE_PER_POP = 9999 ether;
     uint256 PRICE_PER_BBGT = 1999 ether;
 
-    uint256 public constant maxPurchase = 3;
+    uint256 public constant maxPurchase = 5;
     bool public isSale = false;
 
     address public C1;
@@ -30,7 +30,7 @@ contract BBGTSale is Context {
             BBGTNFTContract.totalSupply() < MAX_SUPPLY,
             "Sale has already ended."
         );
-        require(numberOfTokens <= maxPurchase, "Can only mint 3 NFT at a time");
+        require(numberOfTokens <= maxPurchase, "Can only mint 5 NFT at a time");
         require(
             BBGTNFTContract.totalSupply().add(numberOfTokens) <= MAX_SUPPLY,
             "Purchase would exceed max supply of NFT"
