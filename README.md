@@ -4,6 +4,7 @@ Offical : [bbaguette.xyz](http://bbaguette.xyz)
 
 Maybe third Token based on [POPCATEUM](https://popcateum.org/)
 
+프로젝트 후기: https://devkly.com/blockchain/bbaguette-world/
 
 ![image](https://user-images.githubusercontent.com/41976906/147870434-058aaa9b-3935-4710-96d4-af847597d6ed.png)
 
